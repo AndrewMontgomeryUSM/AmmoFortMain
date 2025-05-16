@@ -31,7 +31,7 @@ void shoppingList(int&, Munition*&);
 bool inList(int, Munition*, std::string);
 void editQuantity(int, Munition*);
 void editPrice(int, Munition*);
-//void receiveSupply(int&, Munition*&);
+void receiveSupply(int&, Munition*&);
 
 int main()
 {
@@ -76,11 +76,10 @@ int main()
         case 5: "Adjusting Unit Cost Per Round:\n";
             editPrice(totalBins, stock);
             break;
-        /*case 6: "Receive Order:\n";
+        case 6: "Receive Order:\n";
             receiveSupply(totalBins, stock);
             shoppingList(totalBins, stock);
             break;
-        */
         default:
             cout << "Invalid Selection!\n";
     }
@@ -418,4 +417,86 @@ void editPrice(int totalBins, Munition* stockList)
     }
 
     outFile.close();
+}
+
+/*
+-----------------------------------------------------------------------------
+Comprehensive stock receiving function
+Line by line from receipt, creates new bins and edits cost while updating
+the quantity on hand
+-----------------------------------------------------------------------------
+*/
+
+void receiveSupply(int& totalBins, Munition*& stockList)
+{
+    int receiptItems;
+    std::cout << "Count line items on the receipt: ";
+    std::cin >> receiptItems;
+    std::cin.ignore();  // clear newline from buffer
+
+    for (int i = 0; i < receiptItems; ++i)
+    {
+        std::string name;
+        int receivedQty;
+        double receivedCost;
+
+        cout << "\nItem " << (i + 1) << " name: ";
+        getline(std::cin, name);
+
+        cout << "Total received: ";
+        cin >> receivedQty;
+
+        cout << "Cost: ";
+        cin >> receivedCost;
+        cin.ignore();  // clear buffer
+
+        bool found = false;
+
+        for (int j = 0; j < totalBins; ++j)
+        {
+            if (stockList[j].getCal() == name)
+            {
+                stockList[j].setQuant((stockList[j].getQuant()) + receivedQty);
+                if (receivedCost > 0)
+                    stockList[j].setCost(receivedCost);
+
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            std::cout << "Adding new item to inventory: " << name << "\n";
+
+            Munition* newStockList = new Munition[totalBins + 1];
+            for (int j = 0; j < totalBins; ++j)
+                newStockList[j] =stockList[j];
+
+            newStockList[totalBins].setCal(name);
+            newStockList[totalBins].setQuant(receivedQty);
+            newStockList[totalBins].setCost(receivedCost);
+
+            delete[] stockList;
+            stockList = newStockList;
+            ++totalBins;
+        }
+    }
+
+    // Write updated pantry to CSV
+    std::ofstream outFile("AmmoFort.csv");
+    if (!outFile)
+    {
+        std::cerr << "Error opening AmmoFort.csv for writing.\n";
+        return;
+    }
+
+    for (int i = 0; i < totalBins; ++i)
+    {
+        outFile << stockList[i].getCal() << "," << stockList[i].getQuant() << "," << stockList[i].getCost() << "\n";
+    }
+
+    outFile.close();
+    cout << "\nInventory updated and saved to AmmoFort.csv.\n";
+
 }
