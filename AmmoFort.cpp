@@ -1,8 +1,8 @@
 /*
 ----------------------------------------------------------------------------- 
 **NOTE**
+Segmentation Fault when running option 2
 
-Remove commented out lines as functions are added, including function call for totalBins() in multiple places
 
 */
 
@@ -24,8 +24,8 @@ const int MINIMUM_INVENTORY = 500;
 //Function prototypes
 void fillInventory();
 Munition* loadInventory(int&);
-//int binCounter();
-//void shoppingList(int, Munition*);
+int binCounter();
+void shoppingList(int&, Munition*&);
 //bool inList(int, Munition*, std::string);
 //void editQuantity(int, Munition*);
 //void editPrice(int, Munition*);
@@ -33,7 +33,7 @@ Munition* loadInventory(int&);
 
 int main()
 {
-    int totalBins = 3; //binCounter();
+    int totalBins = binCounter();
     Munition* stock = loadInventory(totalBins);
 
     int choice;
@@ -55,10 +55,10 @@ int main()
         case 1: "Making New Inventory:\n";
             fillInventory();
             break;
-        /*case 2: "Completing Shopping List:\n";
-            //groceryList(totalBins, stock);
+        case 2: "Completing Shopping List:\n";
+            shoppingList(totalBins, stock);
             break;
-        case 3: "Search for item\n"; 
+        /*case 3: "Search for item\n"; 
             cout << "Item Name: ";
                 cin.ignore();
                 getline(cin, grocery);
@@ -157,15 +157,15 @@ program.
 
 Munition* loadInventory(int& totalBins)
 {   
-    totalBins = 3;//binCounter();
+    totalBins = binCounter();
     std::string line;
 
     // Creates the file if it doesn't exist, replaces it if it does.
-    std::ifstream inFile("pantry.csv");
+    std::ifstream inFile("AmmoFort.csv");
 
     if (!inFile)
     {
-        std::cerr << "Error opening pantry.csv!\n";
+        std::cerr << "Error opening AmmoFort.csv!\n";
         return nullptr;
     }
 
@@ -194,4 +194,99 @@ Munition* loadInventory(int& totalBins)
 
     inFile.close();
     return stock; 
+}
+
+/*
+-----------------------------------------------------------------------------
+Counts how many items are being held in the inventory .csv file for use in 
+dynamic array creation later in the program
+-----------------------------------------------------------------------------
+*/
+int binCounter()
+{
+    int totalBins = 0 ; // How many Provision objects are held in inventory
+    
+    std::string line;
+
+    std::ifstream inFile("AmmoFort.csv");
+
+    if (!inFile) 
+    {
+        std::cerr << "Error reading file!\n";
+    }
+
+    // Determines how long the dynamic array needs to be
+
+    while (std::getline(inFile, line)) 
+    {
+        if (!line.empty())
+            ++totalBins;
+    }
+    return totalBins;
+}
+
+/*
+-----------------------------------------------------------------------------
+Creates a shopping list based on minimum inventory and generates an estimate
+for the cost of the total order.
+-----------------------------------------------------------------------------
+*/
+
+void shoppingList(int& totalBins, Munition*& stockList)
+{
+    std::ofstream outFile("shopping_list.txt");
+
+    // Gets current time for grocery list print out
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+    
+    if (!outFile) 
+    {
+        std::cerr << "Error creating file!\n";
+    }
+    
+    Munition* shoppingList = new Munition[totalBins]; 
+
+    int onHand, shoppingCount = 0; 
+
+    for (int count = 0; count < totalBins; count++)
+    {
+        onHand = stockList[count].getQuant();
+
+        
+        if (onHand < MINIMUM_INVENTORY)
+        {
+            shoppingList[shoppingCount].setCal(stockList[count].getCal());
+            shoppingList[shoppingCount].setQuant(stockList[count].getQuant());
+            shoppingList[shoppingCount].setCost(stockList[count].getCost());
+            shoppingCount++;
+        }
+
+    }
+
+    // Calculates the estimated total from previously recorded costs for items in inventory.
+    double estimatedCost = 0.0;
+    for (int count = 0; count < shoppingCount; count++)
+    {
+        estimatedCost += shoppingList[count].getCost();
+    }
+
+    // Formatting for the .txt file for easier readability
+    outFile << "**********Shopping List**********\n";
+    outFile << std::put_time(std::localtime(&now_time), "%A, %B %d, %Y %I:%M %p") << "\n";
+    outFile << "*********************************\n\n";
+    for (int count = 0; count < shoppingCount; count++)
+    {
+        outFile << shoppingList[count].getCal() << "\n";
+    }
+    outFile << "\n";
+    outFile << "*********************************\n";
+    outFile << "Estimated Price for Stock: \n" << setw(12) << right
+        << setprecision(2) << showpoint << fixed << "$" <<(estimatedCost * MINIMUM_INVENTORY) << endl;
+
+    cout << "Stock List Created as shopping_list.txt!" << endl;
+
+    delete[] shoppingList;
+    shoppingList = nullptr;
+    outFile.close();
 }
