@@ -1,3 +1,11 @@
+/*
+----------------------------------------------------------------------------- 
+**NOTE**
+
+Remove commented out lines as functions are added, including function call for totalBins() in multiple places
+
+*/
+
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -16,16 +24,16 @@ const int MINIMUM_INVENTORY = 500;
 //Function prototypes
 void fillInventory();
 Munition* loadInventory(int&);
-int binCounter();
-void shoppingList(int, Munition*);
-bool inList(int, Munition*, std::string);
-void editQuantity(int, Munition*);
-void editPrice(int, Munition*);
-void receiveSupply(int&, Munition*&);
+//int binCounter();
+//void shoppingList(int, Munition*);
+//bool inList(int, Munition*, std::string);
+//void editQuantity(int, Munition*);
+//void editPrice(int, Munition*);
+//void receiveSupply(int&, Munition*&);
 
 int main()
 {
-    int totalBins = binCounter();
+    int totalBins = 3; //binCounter();
     Munition* stock = loadInventory(totalBins);
 
     int choice;
@@ -47,8 +55,8 @@ int main()
         case 1: "Making New Inventory:\n";
             fillInventory();
             break;
-        case 2: "Completing Shopping List:\n";
-            groceryList(totalBins, stock);
+        /*case 2: "Completing Shopping List:\n";
+            //groceryList(totalBins, stock);
             break;
         case 3: "Search for item\n"; 
             cout << "Item Name: ";
@@ -70,6 +78,7 @@ int main()
             receiveSupply(totalBins, stock);
             shoppingList(totalBins, stock);
             break;
+        */
         default:
             cout << "Invalid Selection!\n";
     }
@@ -148,7 +157,7 @@ program.
 
 Munition* loadInventory(int& totalBins)
 {   
-    totalBins = binCounter();
+    totalBins = 3;//binCounter();
     std::string line;
 
     // Creates the file if it doesn't exist, replaces it if it does.
