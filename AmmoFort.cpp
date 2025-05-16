@@ -1,9 +1,11 @@
 /*
 ----------------------------------------------------------------------------- 
-**NOTE**
-Segmentation Fault when running option 2
+**NOTE** Developer Notes Here
 
-
+Corrected issue with shoppingList price, logical issue with handling 
+estimatedCost and what member function was being called. As it was showing 
+qtyOnHand * cost * MINIMUM which was grossly inflating the estimated price. 
+corrected to unit price * MINIMUM for an accurate number. 
 */
 
 #include <iostream>
@@ -27,7 +29,7 @@ Munition* loadInventory(int&);
 int binCounter();
 void shoppingList(int&, Munition*&);
 bool inList(int, Munition*, std::string);
-//void editQuantity(int, Munition*);
+void editQuantity(int, Munition*);
 //void editPrice(int, Munition*);
 //void receiveSupply(int&, Munition*&);
 
@@ -67,11 +69,11 @@ int main()
             else
                 cout << "Item Not Found\n";
             break;
-        /*case 4: "Adjusting Quantity on Hand:\n";
+        case 4: "Adjusting Quantity on Hand:\n";
             editQuantity(totalBins, stock);
             shoppingList(totalBins, stock);
             break;
-        case 5: "Adjusting Unit Cost Per Round:\n";
+        /*case 5: "Adjusting Unit Cost Per Round:\n";
             editPrice(totalBins, stock);
             break;
         case 6: "Receive Order:\n";
@@ -308,4 +310,49 @@ bool inList(int totalBins, Munition* stockList, std::string item)
     }
 
     return inStock;
+}
+
+void editQuantity(int totalBins, Munition* stockList)
+{
+    std::string stock;
+    int actualQuantity;
+    std::ofstream outFile("AmmoFort.csv");
+
+    cout << "Item Name: ";
+    cin.ignore();
+    getline(cin, stock);
+
+    // Calls in-stock function to check before edit
+    if (inList(totalBins, stockList, stock) != true)
+    {    
+        cout << "Item not in Inventory\n";
+        return;
+    }  
+
+    cout << "Actual Quantity on Hand: ";
+    cin >> actualQuantity;
+
+    if (inList(totalBins, stockList, stock) != true)
+        cout << "Item not in Inventory\n";
+
+    // Checks quantity on hand for quantity in object array
+    for (int count = 0; count < totalBins; count++)
+    {
+        if (stock == stockList[count].getCal() && stockList[count].getQuant() != actualQuantity)
+        {    
+            stockList[count].setQuant(actualQuantity);
+            cout << "Quantity changed successfully\n";
+        }
+        else if (stock == stockList[count].getCal() && stockList[count].getQuant() == actualQuantity)
+            cout << "Quantity in system matches actual quantity on hand\n";
+    }
+
+        // Saves dynamic array to a .csv file for permanence
+    for (int count = 0; count < totalBins; count++)
+    {
+        outFile << stockList[count].getCal() << ","
+        << stockList[count].getQuant() << ","
+        << stockList[count].getCost() << "\n";
+    }
+    outFile.close();
 }
