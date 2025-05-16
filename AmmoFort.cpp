@@ -1,11 +1,23 @@
 /*
 ----------------------------------------------------------------------------- 
+**Program Details**
+
+Fork of pantry program, I've tried to clear out any references to the old
+code, but there may be an odd reference. Everything appears to function as
+intended currently. 
+
+----------------------------------------------------------------------------- 
 **NOTE** Developer Notes Here
 
 Corrected issue with shoppingList price, logical issue with handling 
 estimatedCost and what member function was being called. As it was showing 
 qtyOnHand * cost * MINIMUM which was grossly inflating the estimated price. 
 corrected to unit price * MINIMUM for an accurate number. 
+----------------------------------------------------------------------------- 
+**Features to add**
+
+I'll probably begin researching and preparing to add
+----------------------------------------------------------------------------- 
 */
 
 #include <iostream>
