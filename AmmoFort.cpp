@@ -26,7 +26,7 @@ void fillInventory();
 Munition* loadInventory(int&);
 int binCounter();
 void shoppingList(int&, Munition*&);
-//bool inList(int, Munition*, std::string);
+bool inList(int, Munition*, std::string);
 //void editQuantity(int, Munition*);
 //void editPrice(int, Munition*);
 //void receiveSupply(int&, Munition*&);
@@ -37,7 +37,7 @@ int main()
     Munition* stock = loadInventory(totalBins);
 
     int choice;
-    std::string grocery;   
+    std::string item;   
 
     // Menu options; added as functions are added.
     cout << "*****Inventory Management System********\n";
@@ -58,16 +58,16 @@ int main()
         case 2: "Completing Shopping List:\n";
             shoppingList(totalBins, stock);
             break;
-        /*case 3: "Search for item\n"; 
+        case 3: "Search for item\n"; 
             cout << "Item Name: ";
                 cin.ignore();
-                getline(cin, grocery);
-            if (inList(totalBins, stock, grocery) == true)
+                getline(cin, item);
+            if (inList(totalBins, stock, item) == true)
                 cout << "Item in stock:\n";
             else
                 cout << "Item Not Found\n";
             break;
-        case 4: "Adjusting Quantity on Hand:\n";
+        /*case 4: "Adjusting Quantity on Hand:\n";
             editQuantity(totalBins, stock);
             shoppingList(totalBins, stock);
             break;
@@ -289,4 +289,23 @@ void shoppingList(int& totalBins, Munition*& stockList)
     delete[] shoppingList;
     shoppingList = nullptr;
     outFile.close();
+}
+
+bool inList(int totalBins, Munition* stockList, std::string item)
+{
+    std::string stock;
+    
+    bool inStock = false;
+
+    stock = item;
+
+    for (int count = 0; count < totalBins; count++)
+    {
+        if(stock == stockList[count].getCal() && stockList[count].getQuant() > 0)
+        {
+            inStock = true;
+        }
+    }
+
+    return inStock;
 }
