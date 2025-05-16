@@ -293,6 +293,11 @@ void shoppingList(int& totalBins, Munition*& stockList)
     outFile.close();
 }
 
+/*
+-----------------------------------------------------------------------------
+Returns a boolean value if an item is in the file
+-----------------------------------------------------------------------------
+*/
 bool inList(int totalBins, Munition* stockList, std::string item)
 {
     std::string stock;
@@ -311,6 +316,12 @@ bool inList(int totalBins, Munition* stockList, std::string item)
 
     return inStock;
 }
+
+/*
+-----------------------------------------------------------------------------
+Allows user to edit the quantity on hand of a given item if it is in stock
+-----------------------------------------------------------------------------
+*/
 
 void editQuantity(int totalBins, Munition* stockList)
 {
