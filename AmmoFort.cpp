@@ -30,7 +30,7 @@ int binCounter();
 void shoppingList(int&, Munition*&);
 bool inList(int, Munition*, std::string);
 void editQuantity(int, Munition*);
-//void editPrice(int, Munition*);
+void editPrice(int, Munition*);
 //void receiveSupply(int&, Munition*&);
 
 int main()
@@ -73,10 +73,10 @@ int main()
             editQuantity(totalBins, stock);
             shoppingList(totalBins, stock);
             break;
-        /*case 5: "Adjusting Unit Cost Per Round:\n";
+        case 5: "Adjusting Unit Cost Per Round:\n";
             editPrice(totalBins, stock);
             break;
-        case 6: "Receive Order:\n";
+        /*case 6: "Receive Order:\n";
             receiveSupply(totalBins, stock);
             shoppingList(totalBins, stock);
             break;
@@ -365,5 +365,57 @@ void editQuantity(int totalBins, Munition* stockList)
         << stockList[count].getQuant() << ","
         << stockList[count].getCost() << "\n";
     }
+    outFile.close();
+}
+
+/*
+-----------------------------------------------------------------------------
+Functions Identical to the quantity function, takes a single line item from 
+user, confirms in stock, then allows the cost per round to be edited and 
+saved in the .csv file for permanence. 
+-----------------------------------------------------------------------------
+*/
+
+void editPrice(int totalBins, Munition* stockList)
+{
+    std::string stock;
+    float actualPrice;
+    std::ofstream outFile("AmmoFort.csv");
+
+
+    cout << "Item Name: ";
+    cin.ignore();
+    getline(cin, stock);
+
+    if (inList(totalBins, stockList, stock) != true)
+    {    
+        cout << "Item not in Inventory\n";
+        return;
+    }  
+
+    cout << "Actual Cost of Item: ";
+    cin >> actualPrice;
+
+    // Checks quantity on hand for quantity in object array
+    for (int count = 0; count < totalBins; count++)
+    {
+        if (stock == stockList[count].getCal() && stockList[count].getCost() != actualPrice)
+        {    
+            stockList[count].setCost(actualPrice);
+            cout << "Cost changed successfully\n";
+        }
+        else if (stock == stockList[count].getCal() && stockList[count].getCost() == actualPrice)
+            cout << "Cost in system matches actual quantity on hand\n";
+        
+    }
+
+    // Saves dynamic array to a .csv file for permanence
+    for (int count = 0; count < totalBins; count++)
+    {
+        outFile << stockList[count].getCal() << ","
+        << stockList[count].getQuant() << ","
+        << stockList[count].getCost() << "\n";
+    }
+
     outFile.close();
 }
