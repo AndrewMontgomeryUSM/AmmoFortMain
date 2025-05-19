@@ -28,7 +28,8 @@ I'll probably begin researching and preparing to add
 #include <limits>
 #include <ctime>
 #include <chrono>
-#include "Munition.h"
+#include "../include/Munition.h"
+#include "../include/FilePath.h"
 using namespace std;
 
 // This is the minimum threshold before an item is moved
@@ -119,7 +120,7 @@ void fillInventory()
     int tempQuant;
     double tempCost;
 
-    std::ofstream outFile("AmmoFort.csv");
+    std::ofstream outFile(INVENTORY_FILE);
     
     if (!outFile) 
     {
@@ -174,7 +175,7 @@ Munition* loadInventory(int& totalBins)
     std::string line;
 
     // Creates the file if it doesn't exist, replaces it if it does.
-    std::ifstream inFile("AmmoFort.csv");
+    std::ifstream inFile(INVENTORY_FILE);
 
     if (!inFile)
     {
@@ -221,7 +222,7 @@ int binCounter()
     
     std::string line;
 
-    std::ifstream inFile("AmmoFort.csv");
+    std::ifstream inFile(INVENTORY_FILE);
 
     if (!inFile) 
     {
@@ -247,7 +248,7 @@ for the cost of the total order.
 
 void shoppingList(int& totalBins, Munition*& stockList)
 {
-    std::ofstream outFile("shopping_list.txt");
+    std::ofstream outFile(SHOPPING_LIST_FILE); 
 
     // Gets current time for grocery list print out
     auto now = std::chrono::system_clock::now();
@@ -338,7 +339,7 @@ void editQuantity(int totalBins, Munition* stockList)
 {
     std::string stock;
     int actualQuantity;
-    std::ofstream outFile("AmmoFort.csv");
+    std::ofstream outFile(INVENTORY_FILE);
 
     cout << "Item Name: ";
     cin.ignore();
@@ -391,7 +392,7 @@ void editPrice(int totalBins, Munition* stockList)
 {
     std::string stock;
     float actualPrice;
-    std::ofstream outFile("AmmoFort.csv");
+    std::ofstream outFile(INVENTORY_FILE);
 
 
     cout << "Item Name: ";
@@ -496,7 +497,7 @@ void receiveSupply(int& totalBins, Munition*& stockList)
     }
 
     // Write updated pantry to CSV
-    std::ofstream outFile("AmmoFort.csv");
+    std::ofstream outFile(INVENTORY_FILE);
     if (!outFile)
     {
         std::cerr << "Error opening AmmoFort.csv for writing.\n";
